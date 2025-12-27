@@ -1,0 +1,117 @@
+version: "3.9"
+
+services:
+
+  postgres-user:
+    image: postgres:16
+    container_name: postgres-user
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  postgres-enrollment:
+    image: postgres:16
+    container_name: postgres-enrollment
+    environment:
+      POSTGRES_DB: enrollment_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+
+  postgres-payment:
+    image: postgres:16
+    container_name: postgres-payment
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.1
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8086:8080"
+
+  user-service:
+    build:
+      context: ./user-service
+    image: lms/user-service
+    container_name: user-service
+    depends_on:
+      - postgres-user
+    ports:
+      - "8081:8081"
+
+  course-service:
+    build:
+      context: ./course-service
+    image: lms/course-service
+    container_name: course-service
+    depends_on:
+      - mongodb
+    ports:
+      - "8082:8082"
+
+  enrollment-service:
+    build:
+      context: ./enrollment-service
+    image: lms/enrollment-service
+    container_name: enrollment-service
+    depends_on:
+      - postgres-enrollment
+      - user-service
+      - course-service
+    ports:
+      - "8083:8083"
+
+  payment-service:
+    build:
+      context: ./payment-service
+    image: lms/payment-service
+    container_name: payment-service
+    depends_on:
+      - postgres-payment
+    ports:
+      - "8084:8084"
+
+  analytics-service:
+    build:
+      context: ./analytics-service
+    image: lms/analytics-service
+    container_name: analytics-service
+    depends_on:
+      - enrollment-service
+      - payment-service
+    ports:
+      - "8085:8085"
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    image: lms/api-gateway
+    container_name: api-gateway
+    depends_on:
+      - user-service
+      - course-service
+      - enrollment-service
+      - payment-service
+      - analytics-service
+      - keycloak
+    ports:
+      - "8088:8088"
