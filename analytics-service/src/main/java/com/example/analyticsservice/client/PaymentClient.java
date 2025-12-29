@@ -11,7 +11,7 @@ public class PaymentClient {
 
     public PaymentDto[] getAllPayments() {
         return restTemplate.getForObject(
-                "http://localhost:8084/payments",
+                "http://payment-service:8084/payments",
                 PaymentDto[].class
         );
     }

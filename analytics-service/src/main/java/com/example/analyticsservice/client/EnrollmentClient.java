@@ -11,7 +11,7 @@ public class EnrollmentClient {
 
     public EnrollmentDto[] getAllEnrollments() {
         return restTemplate.getForObject(
-                "http://localhost:8083/enrollments",
+                "http://enrollment-service:8083/enrollments",
                 EnrollmentDto[].class
         );
     }
