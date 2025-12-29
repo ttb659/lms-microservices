@@ -7,4 +7,4 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://mongodb:27017/course_db
+      uri: mongodb://admin:admin@mongodb:27017/course_db?authSource=admin
