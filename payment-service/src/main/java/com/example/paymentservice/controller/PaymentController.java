@@ -6,6 +6,7 @@ import com.example.paymentservice.repository.PaymentRepository;
 import com.example.paymentservice.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,13 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final PaymentRepository paymentRepository;
 
+    @PreAuthorize("hasRole('STUDENT')")
     @PostMapping
     public Payment pay(@Valid @RequestBody PaymentRequest request) {
         return paymentService.processPayment(request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<Payment> getAll() {
         return paymentRepository.findAll();

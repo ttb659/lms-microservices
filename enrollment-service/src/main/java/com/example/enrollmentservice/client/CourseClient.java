@@ -1,15 +1,20 @@
 package com.example.enrollmentservice.client;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 @Component
+@RequiredArgsConstructor
 public class CourseClient {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     public void validateCourse(String courseId) {
-        String url = "http://course-service:8082/courses/" + courseId;
-        restTemplate.getForObject(url, Object.class);
+        restTemplate.getForObject(
+         "http://course-service:8082/courses/" + courseId,
+                void.class
+        );
     }
 }

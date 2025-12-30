@@ -6,7 +6,8 @@ import com.example.userservice.dto.UserRequest;
 import com.example.userservice.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class UserController {
         return userService.createUser(user);
     }*/
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public User createUser(@Valid @RequestBody UserRequest request) {
         User user = User.builder()
@@ -36,18 +38,27 @@ public class UserController {
         return userService.createUser(user);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','STUDENT')")
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<User> getUsers() {
         return userService.getAllUsers();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
+
+    @GetMapping("/debug/authorities")
+    public Object debugAuthorities(Authentication authentication) {
+        return authentication.getAuthorities();
+    }
+
 }

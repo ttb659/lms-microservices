@@ -8,3 +8,19 @@ spring:
   data:
     mongodb:
       uri: mongodb://admin:admin@mongodb:27017/course_db?authSource=admin
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/lms-realm
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
