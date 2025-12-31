@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enrollment-service
+  namespace: lms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: enrollment-service
+  template:
+    metadata:
+      labels:
+        app: enrollment-service
+    spec:
+      containers:
+        - name: enrollment-service
+          image: enrollment-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8083
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: enrollment-service
+  namespace: lms
+spec:
+  selector:
+    app: enrollment-service
+  ports:
+    - port: 8083

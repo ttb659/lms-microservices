@@ -106,6 +106,17 @@ services:
   # =========================
   # MICROSERVICES
   # =========================
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8087:8086"
+    depends_on:
+      - keycloak
+    networks:
+      - lms-network
+
   user-service:
     build: ./user-service
     image: lms/user-service
@@ -223,8 +234,6 @@ services:
     ports:
       - "3000:3000"
     networks: [ lms-network ]
-
-
 
 
 

@@ -17,16 +17,18 @@ public class SecurityConfig {
         http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
 
-                .authorizeExchange(exchange -> exchange
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers("/auth/login").permitAll()
                         .pathMatchers("/actuator/**").permitAll()
                         .anyExchange().authenticated()
                 )
 
-                // ⬇️ LIGNE CORRIGÉE (Boot 4 / Security 6)
+                // ✅ NOUVELLE SYNTAXE (non dépréciée)
                 .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(Customizer.withDefaults())
+                        oauth2.jwt(jwtSpec -> {})
                 );
 
         return http.build();
     }
 }
+
