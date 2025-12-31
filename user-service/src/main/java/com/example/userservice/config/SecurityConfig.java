@@ -9,17 +9,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private UserSyncFilter userSyncFilter;
-
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            KeycloakJwtConverter jwtConverter
+            KeycloakJwtConverter jwtConverter,
+            UserSyncFilter userSyncFilter   // ✅ INJECTION ICI
     ) throws Exception {
 
         http
@@ -32,7 +30,9 @@ public class SecurityConfig {
                         oauth2.jwt(jwt ->
                                 jwt.jwtAuthenticationConverter(jwtConverter)
                         )
-                ).addFilterBefore(userSyncFilter, UsernamePasswordAuthenticationFilter.class);
+                )
+                // ✅ le filtre N'EST PLUS null
+                .addFilterBefore(userSyncFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
